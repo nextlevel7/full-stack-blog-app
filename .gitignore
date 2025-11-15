@@ -1,0 +1,33 @@
+# Next.js
+.next/
+out/
+dist/
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+
+# Environment
+.env
+.env.local
+
+# Uploads
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
