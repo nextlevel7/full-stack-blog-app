@@ -129,15 +129,18 @@ export const PostForm = forwardRef<PostFormHandle, Props>(function PostForm(
 
   return (
     <div className="editor-wrapper">
-      <div className="editor-word-count">
-        {wordCount} {wordCount === 1 ? "word" : "words"}
-      </div>
       <input
         className="editor-title"
         name="title"
         placeholder="Title your masterpiece"
         value={title}
         onChange={(event) => setTitle(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            void editorRef.current?.focus();
+          }
+        }}
         disabled={busy}
       />
       <Editor

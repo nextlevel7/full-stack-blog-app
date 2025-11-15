@@ -8,6 +8,7 @@ export type EditorHandle = {
   save: () => Promise<OutputData | null>;
   clear: () => Promise<void>;
   render: (data: OutputData) => Promise<void>;
+  focus: () => Promise<void>;
 };
 
 type Props = {
@@ -151,6 +152,25 @@ export const Editor = forwardRef<EditorHandle, Props>(function Editor({ data, pl
       },
       async clear() {
         await clearEditor();
+      },
+      async focus() {
+        if (!instanceRef.current) return;
+        await instanceRef.current.isReady;
+        const holder = document.getElementById(holderId);
+        if (!holder) return;
+        const editable = holder.querySelector<HTMLElement>("[contenteditable='true']");
+        if (editable) {
+          editable.focus();
+          try {
+            const range = document.createRange();
+            range.selectNodeContents(editable);
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel?.removeAllRanges();
+            sel?.addRange(range);
+          } catch {
+          }
+        }
       },
       async render(payload: OutputData) {
         await renderData(payload);
