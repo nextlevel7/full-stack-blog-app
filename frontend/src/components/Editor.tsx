@@ -4,6 +4,8 @@ import { useId, useEffect, useRef, forwardRef, useImperativeHandle, useMemo, use
 import type EditorJS from "@editorjs/editorjs";
 import type { OutputData, EditorConfig } from "@editorjs/editorjs";
 
+import SafeCodeTool from "@/lib/safe-code-tool";
+
 export type EditorHandle = {
   save: () => Promise<OutputData | null>;
   clear: () => Promise<void>;
@@ -37,7 +39,6 @@ export const Editor = forwardRef<EditorHandle, Props>(function Editor({ data, pl
         { default: List },
         { default: Checklist },
         { default: Quote },
-        { default: Code },
         { default: Table },
         { default: Embed },
         { default: ImageTool },
@@ -47,7 +48,6 @@ export const Editor = forwardRef<EditorHandle, Props>(function Editor({ data, pl
         import("@editorjs/list"),
         import("@editorjs/checklist"),
         import("@editorjs/quote"),
-        import("@editorjs/code"),
         import("@editorjs/table"),
         import("@editorjs/embed"),
         import("@editorjs/image"),
@@ -66,7 +66,7 @@ export const Editor = forwardRef<EditorHandle, Props>(function Editor({ data, pl
           list: { class: List, inlineToolbar: true },
           checklist: { class: Checklist, inlineToolbar: true },
           quote: { class: Quote, inlineToolbar: true },
-          code: Code,
+          code: SafeCodeTool,
           table: Table,
           embed: Embed,
         image: {
