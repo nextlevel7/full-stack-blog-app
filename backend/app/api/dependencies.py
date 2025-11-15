@@ -1,19 +1,42 @@
 from __future__ import annotations
 
+import logging
+from typing import Generator
+
 from fastapi import Depends, Header, HTTPException, status
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
+from ..core.errors import PersistenceError
 from ..core.security import TokenError, decode_access_token
+from ..db import SessionLocal
 from ..models.user import UserRecord
-from ..services.posts import PostService, get_post_service
-from ..services.users import UserService, get_user_service
+from ..repositories.posts import PostRepository
+from ..repositories.users import UserRepository
+from ..services.posts import PostService
+from ..services.users import UserService
+
+logger = logging.getLogger(__name__)
 
 
-def get_posts_service() -> PostService:
-    return get_post_service()
+def get_db_session() -> Generator[Session, None, None]:
+    session = SessionLocal()
+    try:
+        yield session
+    except SQLAlchemyError as exc:
+        session.rollback()
+        logger.exception("Database operation failed")
+        raise PersistenceError("Database session error") from exc
+    finally:
+        session.close()
 
 
-def get_users_service() -> UserService:
-    return get_user_service()
+def get_posts_service(session: Session = Depends(get_db_session)) -> PostService:
+    return PostService(PostRepository(session))
+
+
+def get_users_service(session: Session = Depends(get_db_session)) -> UserService:
+    return UserService(UserRepository(session))
 
 
 def get_current_user(
