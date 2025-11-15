@@ -38,6 +38,9 @@ export default function MyStoriesPage() {
   }, [initialized, router, token]);
 
   const handleDelete = async (slug: string) => {
+    if (typeof window !== "undefined" && !window.confirm("Delete this story? This action cannot be undone.")) {
+      return;
+    }
     if (!token) {
       router.push("/auth");
       return;

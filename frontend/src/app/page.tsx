@@ -71,21 +71,6 @@ export default function HomePage() {
     };
   }, []);
 
-  const handleDelete = async (slug: string) => {
-    if (!token) {
-      return;
-    }
-    setBusySlug(slug);
-    try {
-      await deletePost(slug, token);
-      setPosts((prev) => prev.filter((post) => post.slug !== slug));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete post.");
-    } finally {
-      setBusySlug(null);
-    }
-  };
-
   const clearFilters = () => {
     setSearch("");
     setActiveTag(null);
@@ -167,9 +152,8 @@ export default function HomePage() {
         ) : (
           <PostList
             posts={filteredPosts}
-            onDelete={token ? handleDelete : undefined}
             busySlug={busySlug}
-            canDelete={!!token}
+            canDelete={false}
             onSelectTag={(tag) => setActiveTag(tag)}
           />
         )}
