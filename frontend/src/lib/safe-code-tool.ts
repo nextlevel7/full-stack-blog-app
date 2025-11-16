@@ -1,5 +1,6 @@
-import type { SanitizerConfig } from "@editorjs/editorjs";
+import type { SanitizerConfig, ToolConstructable } from "@editorjs/editorjs";
 import CodeTool from "@editorjs/code";
+import { ToolType } from "@editorjs/editorjs/types/tools/adapters/tool-type";
 
 function extractPlaintext(payload: unknown): string {
   if (!payload) {
@@ -24,13 +25,13 @@ function extractPlaintext(payload: unknown): string {
 }
 
 export default class SafeCodeTool extends CodeTool {
-  static override get sanitize(): SanitizerConfig {
+  static get sanitize(): SanitizerConfig {
     return {
       code: true,
     };
   }
 
-  override onPaste(event: any): void {
+  onPaste(event: any): void {
     const detail = event?.detail;
     const raw = detail?.data;
     const text = extractPlaintext(raw);

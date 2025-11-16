@@ -40,7 +40,7 @@ export default function EditStoryPage() {
         const data = await fetchPost(slug);
         setPost(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load story.");
+        setToast({ text: err instanceof Error ? err.message : "Failed to load story.", type: "error" });
         setPost(null);
       } finally {
         setLoading(false);

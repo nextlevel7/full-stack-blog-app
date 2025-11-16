@@ -509,8 +509,8 @@ button {
 }
 
 .article-page {
-  max-width: 100%;
-  overflow-x: hidden;
+  max-width: fit-content;
+  overflow: auto;
   padding: 2rem 0 4rem 2rem;
 }
 
@@ -532,58 +532,10 @@ button {
 }
 
 .article-body {
-  overflow-x: hidden;
+  overflow: auto;
   font-size: 1.15rem;
   line-height: 1.85;
   color: #1f2937;
-}
-
-/* Handle long lines and overflow inside article content */
-.article-body {
-  /* allow normal wrapping for most content */
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
-  hyphens: auto;
-}
-
-.article-body p,
-.article-body li,
-.article-body blockquote,
-.article-body h1,
-.article-body h2,
-.article-body h3,
-.article-body td,
-.article-body th,
-.article-body figcaption {
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-/* Code blocks: keep original formatting but allow horizontal scroll inside the block */
-.article-body pre {
-  white-space: pre;
-  overflow-x: auto;
-  padding: 1rem;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.03);
-}
-
-/* Tables and embeds: make scrollable inside their container to avoid page-level scroll */
-.article-body table,
-.article-body .table-wrap {
-  width: 100%;
-  display: block;
-  overflow-x: auto;
-}
-
-.article-body .embed {
-  max-width: 100%;
-}
-
-.article-body iframe {
-  max-width: 100%;
 }
 
 .article-body p {

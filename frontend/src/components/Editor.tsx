@@ -2,9 +2,10 @@
 
 import { useId, useEffect, useRef, forwardRef, useImperativeHandle, useMemo, useCallback } from "react";
 import type EditorJS from "@editorjs/editorjs";
-import type { OutputData, EditorConfig } from "@editorjs/editorjs";
+import type { OutputData, EditorConfig, ToolConstructable } from "@editorjs/editorjs";
 
 import SafeCodeTool from "@/lib/safe-code-tool";
+import CodeTool from "@editorjs/code";
 
 export type EditorHandle = {
   save: () => Promise<OutputData | null>;
@@ -66,8 +67,7 @@ export const Editor = forwardRef<EditorHandle, Props>(function Editor({ data, pl
           list: { class: List, inlineToolbar: true },
           checklist: { class: Checklist, inlineToolbar: true },
           quote: { class: Quote, inlineToolbar: true },
-          code: SafeCodeTool,
-          table: Table,
+          code: { class: SafeCodeTool as unknown as ToolConstructable },
           embed: Embed,
         image: {
           class: ImageTool,
