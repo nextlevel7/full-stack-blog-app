@@ -1,6 +1,4 @@
-# Full Stack Blog App
-
-FastAPI now powers the backend so the service stays lightweight and sticks to the Python standard library whenever possible.
+# Full Stack Blog APP
 
 ## Backend (FastAPI)
 
@@ -40,9 +38,7 @@ The API exposes the following endpoints:
 
 The JSON files in `backend/data/` act as the storage engine and are created automatically the first time the app runs.
 
-### Using PostgreSQL instead of JSON
-
-By default posts/users are stored in JSON files under `backend/data/`. To switch to PostgreSQL:
+### Using PostgreSQL 
 
 1. Provision a database and note the connection string. Example: `postgresql+psycopg2://user:password@localhost:5432/blog`.
 2. Set the `DATABASE_URL` environment variable before starting FastAPI:
