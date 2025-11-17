@@ -9,11 +9,6 @@ import { login, register, type AuthPayload } from "@/lib/api";
 
 type Mode = "login" | "register";
 
-const oauthProviders = [
-  { name: "Google", initials: "G", accent: "#EA4335" },
-  { name: "GitHub", initials: "GH", accent: "#111827" },
-  { name: "Twitter", initials: "X", accent: "#0EA5E9" },
-];
 
 export default function AuthPage() {
   const router = useRouter();
@@ -23,21 +18,26 @@ export default function AuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+ 
+  const clearError = () => {
+    if (error) setError(null);
+  };
+
   const handleModeChange = (newMode: Mode) => {
     setMode(newMode);
-    setError(null);
+    clearError();
   };
 
   const handleInputChange = (field: keyof AuthPayload, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
-    setError(null);
+    clearError();
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
     
-    // Validation
+ 
     if (!values.username.trim() || !values.password.trim()) {
       setError("Please enter both username and password.");
       return;
@@ -60,7 +60,6 @@ export default function AuthPage() {
       setAuth(result);
       router.push("/compose");
     } catch (err) {
-      // Handle different types of errors gracefully
       if (err instanceof Error) {
         setError(err.message);
       } else if (typeof err === "string") {
@@ -149,24 +148,6 @@ export default function AuthPage() {
               {loading ? "Please wait..." : mode === "login" ? "Log me in" : "Create account"}
             </button>
           </form>
-          <div className="oauth-divider">
-            <span>or continue with</span>
-          </div>
-          <div className="oauth-buttons">
-            {oauthProviders.map((provider) => (
-              <button
-                key={provider.name}
-                type="button"
-                className="oauth-button"
-                onClick={() => handleOAuthClick(provider.name)}
-              >
-                <span className="oauth-button__icon" style={{ background: provider.accent }} aria-hidden="true">
-                  {provider.initials}
-                </span>
-                <span>Continue with {provider.name}</span>
-              </button>
-            ))}
-          </div>
         </section>
       </div>
     </main>
