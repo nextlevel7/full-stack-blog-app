@@ -66,11 +66,6 @@ export default function ComposePage() {
             </button>
           </div>
         )}
-        <p className="eyebrow" style={{ marginTop: "2rem" }}>
-          Workspace
-        </p>
-        <h2>Notion-style drafting</h2>
-        <p style={{ color: "var(--muted)" }}>Full-bleed writing with a floating toolbar.</p>
       </aside>
       <main className="composer-editor">
         {token ? (

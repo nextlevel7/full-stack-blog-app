@@ -35,9 +35,32 @@ function authHeaders(token?: string | null): HeadersRecord {
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    const detail = await response.json().catch(() => ({}));
-    const message = detail?.error || `Request failed with status ${response.status}`;
-    throw new Error(message);
+    let errorMessage = `Request failed with status ${response.status}`;
+    try {
+      const errorData = await response.json();
+      // FastAPI returns 'detail' field, but also handle 'error' and validation errors
+      if (errorData.detail) {
+        errorMessage = Array.isArray(errorData.detail) 
+          ? errorData.detail.map((err: any) => err.msg || err).join(", ")
+          : errorData.detail;
+      } else if (errorData.error) {
+        errorMessage = errorData.error;
+      } else if (errorData.message) {
+        errorMessage = errorData.message;
+      }
+    } catch {
+      // If JSON parsing fails, use status-based messages
+      if (response.status === 401) {
+        errorMessage = "Invalid credentials. Please check your username and password.";
+      } else if (response.status === 400) {
+        errorMessage = "Invalid request. Please check your input.";
+      } else if (response.status === 409) {
+        errorMessage = "Username already exists. Please choose another.";
+      } else if (response.status >= 500) {
+        errorMessage = "Server error. Please try again later.";
+      }
+    }
+    throw new Error(errorMessage);
   }
   return response.status === 204 ? ({} as T) : response.json();
 }
@@ -115,19 +138,35 @@ export async function fetchMyPosts(token: string | null): Promise<Post[]> {
 }
 
 export async function login(payload: AuthPayload): Promise<AuthResponse> {
-  const response = await fetch(`${API_BASE_URL}/auth/login/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-  return handleResponse<AuthResponse>(response);
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return handleResponse<AuthResponse>(response);
+  } catch (err) {
+    // Handle network errors (fetch failures)
+    if (err instanceof TypeError && err.message.includes("fetch")) {
+      throw new Error("Network error. Please check your connection and try again.");
+    }
+    throw err;
+  }
 }
 
 export async function register(payload: AuthPayload): Promise<AuthResponse> {
-  const response = await fetch(`${API_BASE_URL}/auth/register/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-  return handleResponse<AuthResponse>(response);
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/register/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return handleResponse<AuthResponse>(response);
+  } catch (err) {
+    // Handle network errors (fetch failures)
+    if (err instanceof TypeError && err.message.includes("fetch")) {
+      throw new Error("Network error. Please check your connection and try again.");
+    }
+    throw err;
+  }
 }

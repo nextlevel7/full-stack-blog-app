@@ -23,13 +23,36 @@ export default function AuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const handleModeChange = (newMode: Mode) => {
+    setMode(newMode);
+    setError(null);
+  };
+
+  const handleInputChange = (field: keyof AuthPayload, value: string) => {
+    setValues((prev) => ({ ...prev, [field]: value }));
+    setError(null);
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+    
+    // Validation
     if (!values.username.trim() || !values.password.trim()) {
-      setError("Enter both username and password.");
+      setError("Please enter both username and password.");
       return;
     }
+
+    if (values.username.trim().length < 3) {
+      setError("Username must be at least 3 characters long.");
+      return;
+    }
+
+    if (values.password.trim().length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
     setLoading(true);
     try {
       const action = mode === "login" ? login : register;
@@ -37,7 +60,14 @@ export default function AuthPage() {
       setAuth(result);
       router.push("/compose");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to authenticate.");
+      // Handle different types of errors gracefully
+      if (err instanceof Error) {
+        setError(err.message);
+      } else if (typeof err === "string") {
+        setError(err);
+      } else {
+        setError("Unable to authenticate. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -70,7 +100,7 @@ export default function AuthPage() {
             <button
               className={mode === "login" ? "active" : ""}
               type="button"
-              onClick={() => setMode("login")}
+              onClick={() => handleModeChange("login")}
               aria-pressed={mode === "login"}
             >
               Log in
@@ -78,7 +108,7 @@ export default function AuthPage() {
             <button
               className={mode === "register" ? "active" : ""}
               type="button"
-              onClick={() => setMode("register")}
+              onClick={() => handleModeChange("register")}
               aria-pressed={mode === "register"}
             >
               Register
@@ -91,7 +121,10 @@ export default function AuthPage() {
                 name="username"
                 placeholder="@artfulwriter"
                 value={values.username}
-                onChange={(event) => setValues((prev) => ({ ...prev, username: event.target.value }))}
+                onChange={(event) => handleInputChange("username", event.target.value)}
+                disabled={loading}
+                aria-invalid={error ? "true" : "false"}
+                aria-describedby={error ? "error-message" : undefined}
               />
             </label>
             <label className="form-control">
@@ -101,10 +134,17 @@ export default function AuthPage() {
                 name="password"
                 placeholder="••••••••"
                 value={values.password}
-                onChange={(event) => setValues((prev) => ({ ...prev, password: event.target.value }))}
+                onChange={(event) => handleInputChange("password", event.target.value)}
+                disabled={loading}
+                aria-invalid={error ? "true" : "false"}
+                aria-describedby={error ? "error-message" : undefined}
               />
             </label>
-            {error && <div className="status-callout">{error}</div>}
+            {error && (
+              <div className="status-callout" id="error-message" role="alert" aria-live="polite">
+                {error}
+              </div>
+            )}
             <button type="submit" className="pill" disabled={loading} style={{ justifySelf: "flex-start" }}>
               {loading ? "Please wait..." : mode === "login" ? "Log me in" : "Create account"}
             </button>
