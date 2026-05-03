@@ -74,4 +74,4 @@ Compose (`/compose`) and edit (`/compose/[slug]`) pages use Editor.js with image
 
 ### Image uploads
 
-The default Editor.js image tool now posts files to `POST /api/uploads/images`, which stores them under `backend/data/uploads/` and makes them available at `http://<api>/uploads/<filename>`. For a hosted alternative you can point `NEXT_PUBLIC_UPLOAD_ENDPOINT` to any compatible service (e.g., Supabase Storage, Cloudflare R2, or Backblaze B2—all of which offer free tiers) and implement the same JSON response shape in your proxy.
+The default Editor.js image tool posts files to `POST /api/uploads/images`, which stores them under `backend/data/uploads/` and makes them available at `http://<api>/uploads/<filename>`. For a hosted alternative you can point `NEXT_PUBLIC_UPLOAD_ENDPOINT` to any compatible service (e.g., Supabase Storage, Cloudflare R2, or Backblaze B2—all of which offer free tiers) and implement the same JSON response shape in your proxy.
