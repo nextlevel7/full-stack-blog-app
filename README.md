@@ -36,17 +36,6 @@ The API exposes the following endpoints:
 - `PATCH /api/posts/{slug}`
 - `DELETE /api/posts/{slug}`
 
-The JSON files in `backend/data/` act as the storage engine and are created automatically the first time the app runs.
-
-### Using PostgreSQL 
-
-1. Provision a database and note the connection string. Example: `postgresql+psycopg2://user:password@localhost:5432/blog`.
-2. Set the `DATABASE_URL` environment variable before starting FastAPI:
-   ```bash
-   export DATABASE_URL="postgresql+psycopg2://user:password@localhost:5432/blog"
-   ```
-3. Install backend dependencies (SQLAlchemy + psycopg are already listed in `requirements.txt`) and run the app. On startup the `posts` table will be created automatically.
-4. If `DATABASE_URL` is not set, the service will fall back to the JSON storage so local development continues to work.
 
 ## Frontend (Next.js + Editor.js)
 
@@ -68,10 +57,3 @@ frontend/
 cd frontend
 npm install
 npm run dev   # Visit http://localhost:3000
-```
-
-Compose (`/compose`) and edit (`/compose/[slug]`) pages use Editor.js with image uploads handled client-side (data URLs). Stored posts keep both the rendered HTML and original Editor.js JSON so the article detail view can render structured content.
-
-### Image uploads
-
-The default Editor.js image tool posts files to `POST /api/uploads/images`, which stores them under `backend/data/uploads/` and makes them available at `http://<api>/uploads/<filename>`. For a hosted alternative you can point `NEXT_PUBLIC_UPLOAD_ENDPOINT` to any compatible service (e.g., Supabase Storage, Cloudflare R2, or Backblaze B2—all of which offer free tiers) and implement the same JSON response shape in your proxy.
